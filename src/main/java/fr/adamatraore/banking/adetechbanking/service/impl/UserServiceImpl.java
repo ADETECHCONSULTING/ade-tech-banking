@@ -1,21 +1,25 @@
 package fr.adamatraore.banking.adetechbanking.service.impl;
 
-import java.math.BigDecimal;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.adamatraore.banking.adetechbanking.dto.AccountInfoDto;
 import fr.adamatraore.banking.adetechbanking.dto.BankResponseDto;
 import fr.adamatraore.banking.adetechbanking.dto.UserRequestDto;
 import fr.adamatraore.banking.adetechbanking.entity.User;
+import fr.adamatraore.banking.adetechbanking.mapper.IUserMapper;
 import fr.adamatraore.banking.adetechbanking.repository.UserRepository;
 import fr.adamatraore.banking.adetechbanking.service.IUserService;
 import fr.adamatraore.banking.adetechbanking.utils.AccountUtils;
 
+@Service
 public class UserServiceImpl implements IUserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private IUserMapper userMapper;
 
     @Override
     public BankResponseDto createAccount(UserRequestDto userRequestDto) {
@@ -25,19 +29,7 @@ public class UserServiceImpl implements IUserService {
                     .responseMessage(AccountUtils.ACCOUNT_EXISTS)
                     .build();
         } else {
-            User newUser = User.builder()
-                    .firstName(userRequestDto.getFirstName())
-                    .lastName(userRequestDto.getLastName())
-                    .address(userRequestDto.getAddress())
-                    .country(userRequestDto.getCountry())
-                    .email(userRequestDto.getEmail())
-                    .otherName(userRequestDto.getOtherName())
-                    .gender(userRequestDto.getGender())
-                    .phoneNumber(userRequestDto.getPhoneNumber())
-                    .accountNumber(AccountUtils.generateAccountNumber())
-                    .accountBalance(BigDecimal.ZERO)
-                    .status(AccountUtils.AccountStatus.ACTIVE.toString())
-                    .build();
+            User newUser = userMapper.toCreateUser(userRequestDto);
             User savedUser = userRepository.save(newUser);
 
             return BankResponseDto.builder()

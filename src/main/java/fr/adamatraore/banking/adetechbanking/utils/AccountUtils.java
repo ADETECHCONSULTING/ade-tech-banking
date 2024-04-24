@@ -1,13 +1,17 @@
 package fr.adamatraore.banking.adetechbanking.utils;
 
 public class AccountUtils {
-    //Response code
+    // Response code
     public static final String SUCCESS_CODE = "00";
     public static final String FAILED_CODE = "01";
     public static final String ACCOUNT_NOT_FOUND_CODE = "02";
     public static final String ACCOUNT_EXISTS_CODE = "03";
+    public static final String ACCOUNT_FOUND_CODE = "004";
+    public static final String ACCOUNT_CREDITED_SUCCESS = "005";
+    public static final String INSUFFICIENT_BALANCE_CODE = "006";
+    public static final String ACCOUNT_DEBITED_SUCCESS = "007";
 
-    //Response messages
+    // Response messages
     public static final String ACTIVE = "ACTIVE";
     public static final String INACTIVE = "INACTIVE";
     public static final String DORMANT = "DORMANT";
@@ -21,6 +25,10 @@ public class AccountUtils {
     public static final String ACCOUNT_DORMANT_SUCCESSFULLY = "Account dormant successfully";
     public static final String ACCOUNT_DORMANT_FAILED = "Account dormant failed";
     public static final String ACCOUNT_EXISTS = "Account already exists";
+    public static final String ACCOUNT_CREDITED_SUCCESS_MESSAGE = "User Account was credited successfully";
+    public static final String INSUFFICIENT_BALANCE_MESSAGE = "Insufficient Balance";
+    public static final String ACCOUNT_DEBITED_MESSAGE = "Account has been successfully debited";
+    public static final String ACCOUNT_FOUND_SUCCESS = "User Account Found";
 
     public static String generateAccountNumber() {
         return "ADT" + System.currentTimeMillis();

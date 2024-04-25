@@ -9,7 +9,8 @@ public class AccountUtils {
     public static final String ACCOUNT_FOUND_CODE = "004";
     public static final String ACCOUNT_CREDITED_SUCCESS = "005";
     public static final String INSUFFICIENT_BALANCE_CODE = "006";
-    public static final String ACCOUNT_DEBITED_SUCCESS = "007";
+    public static final String ACCOUNT_DEBITED_SUCCESS_CODE = "007";
+    public static final String ACCOUNT_TRANSFER_SUCCESS_CODE = "008";
 
     // Response messages
     public static final String ACTIVE = "ACTIVE";
@@ -29,6 +30,7 @@ public class AccountUtils {
     public static final String INSUFFICIENT_BALANCE_MESSAGE = "Insufficient Balance";
     public static final String ACCOUNT_DEBITED_MESSAGE = "Account has been successfully debited";
     public static final String ACCOUNT_FOUND_SUCCESS = "User Account Found";
+    public static final String ACCOUNT_TRANSFER_SUCCESS = "Account transfer was successful";
 
     public static String generateAccountNumber() {
         return "ADT" + System.currentTimeMillis();

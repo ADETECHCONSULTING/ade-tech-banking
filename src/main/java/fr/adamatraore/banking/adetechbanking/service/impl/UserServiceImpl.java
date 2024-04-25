@@ -10,6 +10,7 @@ import fr.adamatraore.banking.adetechbanking.dto.BankResponseDto;
 import fr.adamatraore.banking.adetechbanking.dto.CreditDebitRequestDto;
 import fr.adamatraore.banking.adetechbanking.dto.EmailDto;
 import fr.adamatraore.banking.adetechbanking.dto.EnquiryRequestDto;
+import fr.adamatraore.banking.adetechbanking.dto.TransferRequestDto;
 import fr.adamatraore.banking.adetechbanking.dto.UserRequestDto;
 import fr.adamatraore.banking.adetechbanking.entity.User;
 import fr.adamatraore.banking.adetechbanking.mapper.IUserMapper;
@@ -153,7 +154,7 @@ public class UserServiceImpl implements IUserService {
             userToDebit.setAccountBalance(userToDebit.getAccountBalance().subtract(request.getAmount()));
             userRepository.save(userToDebit);
             return BankResponseDto.builder()
-                    .responseCode(AccountUtils.ACCOUNT_DEBITED_SUCCESS)
+                    .responseCode(AccountUtils.ACCOUNT_DEBITED_SUCCESS_CODE)
                     .responseMessage(AccountUtils.ACCOUNT_DEBITED_MESSAGE)
                     .accountInfo(AccountInfoDto.builder()
                             .accountNumber(request.getAccountNumber())
@@ -163,6 +164,70 @@ public class UserServiceImpl implements IUserService {
                             .build())
                     .build();
         }
+    }
+
+    @Override
+    public BankResponseDto transfer(TransferRequestDto request) {
+        // get the account to debit
+        // check if the amount im debiting is not more than the account balance
+        // debit the account
+        // credit the targeted account
+        // send email alert to both parties
+
+        boolean isSourceAccountExist = userRepository.existsByAccountNumber(request.getSourceAccountNumber());
+        if (!isSourceAccountExist) {
+            return BankResponseDto.builder()
+                    .responseCode(AccountUtils.ACCOUNT_NOT_FOUND_CODE)
+                    .responseMessage(AccountUtils.ACCOUNT_NOT_FOUND)
+                    .accountInfo(null)
+                    .build();
+        }
+        boolean isTargetAccountExist = userRepository.existsByAccountNumber(request.getTargetAccountNumber());
+        if (!isTargetAccountExist) {
+            return BankResponseDto.builder()
+                    .responseCode(AccountUtils.ACCOUNT_NOT_FOUND_CODE)
+                    .responseMessage(AccountUtils.ACCOUNT_NOT_FOUND)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        User sourceUser = userRepository.findByAccountNumber(request.getSourceAccountNumber());
+        if (request.getAmount().compareTo(sourceUser.getAccountBalance()) > 0) {
+            return BankResponseDto.builder()
+                    .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
+                    .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        User targetUser = userRepository.findByAccountNumber(request.getTargetAccountNumber());
+        sourceUser.setAccountBalance(sourceUser.getAccountBalance().subtract(request.getAmount()));
+        userRepository.save(sourceUser);
+
+        EmailDto sourceEmailDto = EmailDto.builder()
+                .to(sourceUser.getEmail())
+                .subject(MailUtils.ACCOUNT_DEBIT_SUBJECT)
+                .body(MailUtils.ACCOUNT_DEBIT_BODY + request.getAmount())
+                .build();
+
+        emailService.sendEmailAlert(sourceEmailDto);
+
+        targetUser.setAccountBalance(targetUser.getAccountBalance().add(request.getAmount()));
+        userRepository.save(targetUser);
+
+        EmailDto targetEmailDto = EmailDto.builder()
+                .to(targetUser.getEmail())
+                .subject(MailUtils.ACCOUNT_CREDIT_SUBJECT)
+                .body(MailUtils.ACCOUNT_CREDIT_BODY + request.getAmount())
+                .build();
+
+        emailService.sendEmailAlert(targetEmailDto);
+
+        return BankResponseDto.builder()
+                .responseCode(AccountUtils.ACCOUNT_TRANSFER_SUCCESS_CODE)
+                .responseMessage(AccountUtils.ACCOUNT_TRANSFER_SUCCESS)
+                .accountInfo(null)
+                .build();
     }
 
 }

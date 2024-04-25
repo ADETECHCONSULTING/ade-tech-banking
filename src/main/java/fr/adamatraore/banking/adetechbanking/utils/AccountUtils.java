@@ -32,6 +32,11 @@ public class AccountUtils {
     public static final String ACCOUNT_FOUND_SUCCESS = "User Account Found";
     public static final String ACCOUNT_TRANSFER_SUCCESS = "Account transfer was successful";
 
+    // Transaction Types
+    public static final String DEBIT = "DEBIT";
+    public static final String CREDIT = "CREDIT";
+    public static final String TRANSFER = "TRANSFER";
+
     public static String generateAccountNumber() {
         return "ADT" + System.currentTimeMillis();
     }

@@ -19,6 +19,7 @@ public interface IUserMapper {
     @Mapping(target = "accountNumber", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "authUserId", ignore = true)
     User toCreateUser(UserRequestDto userRequestDto);
 
     @AfterMapping

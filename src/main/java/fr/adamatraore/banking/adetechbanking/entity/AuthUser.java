@@ -30,7 +30,6 @@ public class AuthUser implements UserDetails {
     private Long id;
     private String email;
     private String password;
-    private Integer userId;
 
     @Enumerated(EnumType.STRING)
     private Role role;
